@@ -1,0 +1,6 @@
+{
+  "name": "Next Mobbin Clone",
+  "description": "Next Mobbin Clone for testing shadcn-ui",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,20 @@
+"use client";
+
+import { GameReviewModal } from "@/components/modals/game-review-modal";
+import { SearchCommandDialog } from "@/components/modals/search-command-dialog";
+import { useMounted } from "@/hooks/use-mounted";
+
+export const ModalProvider = () => {
+  const mounted = useMounted();
+
+  if (!mounted) {
+    return null;
+  }
+
+  return (
+    <>
+      <SearchCommandDialog />
+      <GameReviewModal />
+    </>
+  );
+};
