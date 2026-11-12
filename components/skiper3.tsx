@@ -165,7 +165,7 @@ export const NavbarSearchPill: React.FC<NavbarSearchPillProps> = ({
       ref={anchorRef}
       className={cn("relative h-9 w-9 shrink-0", className)}
     >
-      {/* Subtle ghost ring in navbar slot while the pill is slid down */}
+      {/* Subtle ghost frame in navbar slot while the search bar is slid down */}
       <button
         type="button"
         tabIndex={isExpanded ? 0 : -1}
@@ -175,9 +175,9 @@ export const NavbarSearchPill: React.FC<NavbarSearchPillProps> = ({
           if (isExpanded) handleCollapse();
         }}
         className={cn(
-          "absolute inset-0 rounded-full border border-dashed border-foreground/20 transition-opacity duration-200",
+          "absolute inset-0 rounded-md border border-dashed border-white/[0.15] transition-opacity duration-200",
           isExpanded
-            ? "opacity-100 cursor-pointer hover:border-foreground/40"
+            ? "opacity-100 cursor-pointer hover:border-white/30"
             : "opacity-0 pointer-events-none"
         )}
       />
@@ -189,7 +189,7 @@ export const NavbarSearchPill: React.FC<NavbarSearchPillProps> = ({
           x: isExpanded ? slideOffset.x : 0,
           y: isExpanded ? slideOffset.y : 0,
           width: isExpanded ? slideOffset.width : 36,
-          height: isExpanded ? 42 : 36,
+          height: isExpanded ? 40 : 36,
         }}
         transition={SLIDE_SPRING}
         onClick={() => {
@@ -202,18 +202,18 @@ export const NavbarSearchPill: React.FC<NavbarSearchPillProps> = ({
         role="search"
         data-expanded={isExpanded}
         aria-label="Expandable catalog search"
-        style={{ borderRadius: 9999 }}
+        style={{ borderRadius: 6 }}
         className={cn(
-          "absolute top-0 left-0 z-50 flex items-center overflow-hidden rounded-full border border-white/15 bg-neutral-900/95 backdrop-blur-md text-white transition-shadow",
+          "absolute top-0 left-0 z-50 flex items-center overflow-hidden rounded-md border border-white/[0.08] bg-[#12151e]/95 backdrop-blur-md text-white transition-colors",
           isExpanded
-            ? "px-3.5 shadow-xl ring-1 ring-white/10"
-            : "justify-center cursor-pointer shadow-sm hover:border-white/30"
+            ? "px-3 shadow-2xl border-white/[0.16]"
+            : "justify-center cursor-pointer hover:bg-[#181c28] hover:border-white/[0.16]"
         )}
       >
         <motion.div
           layout="position"
           transition={SLIDE_SPRING}
-          className="flex items-center justify-center shrink-0 text-white/80"
+          className="flex items-center justify-center shrink-0 text-zinc-300"
         >
           <Search className="size-4" aria-hidden="true" />
         </motion.div>
@@ -237,7 +237,7 @@ export const NavbarSearchPill: React.FC<NavbarSearchPillProps> = ({
                 onClick={(e) => e.stopPropagation()}
                 placeholder={placeholder}
                 aria-label={placeholder}
-                className="w-full flex-1 bg-transparent text-xs sm:text-sm text-white placeholder:text-white/45 focus:outline-none min-w-0"
+                className="w-full flex-1 bg-transparent text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none min-w-0"
               />
 
               <AnimatePresence initial={false}>
@@ -251,7 +251,7 @@ export const NavbarSearchPill: React.FC<NavbarSearchPillProps> = ({
                     transition={{ duration: 0.12 }}
                     onClick={handleClear}
                     aria-label="Clear search query"
-                    className="flex size-4 shrink-0 items-center justify-center rounded-full bg-white/15 text-white/80 hover:bg-white/25 hover:text-white transition-colors"
+                    className="flex size-4 shrink-0 items-center justify-center rounded-sm bg-white/10 text-zinc-300 hover:bg-white/20 hover:text-white transition-colors"
                   >
                     <X className="size-2.5" />
                   </motion.button>

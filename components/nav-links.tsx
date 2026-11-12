@@ -23,10 +23,10 @@ export const NavLinks = () => {
             key={link.path}
             href={`${link.path}/${activeFeature}`}
             className={cn(
-              "text-sm font-medium transition-colors whitespace-nowrap shrink-0 py-1 border-b-2",
+              "text-xs font-medium transition-colors whitespace-nowrap shrink-0",
               isActive
-                ? "border-primary text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "text-white font-semibold"
+                : "text-white/70 hover:text-white"
             )}
           >
             {link.name}

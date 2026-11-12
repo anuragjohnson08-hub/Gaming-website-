@@ -1,16 +1,19 @@
 import { Analytics } from "@/components/analytics";
 import { FpsCapProvider } from "@/components/fps-cap-provider";
+import { InitialLoader } from "@/components/initial-loader";
 import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Next Mobbin Clone",
-  description: "Next Mobbin Clone for testing shadcn-ui",
+  title: "RankPulse — AI SEO & Generative Search Platform",
+  description:
+    "Elevate your site's visibility effortlessly with AI, where smart technology meets intuitive, user-friendly SEO workflows.",
   openGraph: {
-    title: "Next Mobbin Clone",
-    description: "Next Mobbin Clone for testing shadcn-ui",
+    title: "RankPulse — AI SEO & Generative Search Platform",
+    description:
+      "Elevate your site's visibility effortlessly with AI, where smart technology meets intuitive, user-friendly SEO workflows.",
   },
 };
 
@@ -20,10 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="antialiased min-h-screen bg-[#dcfbf5] text-foreground">
-        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className="antialiased min-h-screen bg-[#030305] text-foreground selection:bg-purple-500/30 selection:text-white">
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
           <FpsCapProvider />
+          <InitialLoader />
           {children}
           <ModalProvider />
           <Analytics />

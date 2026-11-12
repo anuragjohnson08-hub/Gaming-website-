@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollFade } from "@/components/scroll-fade-section";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -15,6 +16,7 @@ import Autoplay from "embla-carousel-autoplay";
 import ClassNames from "embla-carousel-class-names";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const featuredSlides = GAMES_CATALOGUE.slice(0, 4).map((game) => ({
@@ -26,6 +28,7 @@ const featuredSlides = GAMES_CATALOGUE.slice(0, 4).map((game) => ({
   reviewCount: game.totalCriticReviews,
   genre: game.genre,
   developer: game.developer,
+  releaseYear: game.releaseYear,
   imageUrl: game.coverImage,
 }));
 
@@ -54,16 +57,25 @@ export function CarouselProgressBar() {
   const activeSlide = featuredSlides[current] || featuredSlides[0];
 
   return (
-    <section className="relative min-h-[380px] md:min-h-[430px] w-full overflow-hidden border-b border-border/80 bg-background">
-      <div className="relative z-10 marge-x py-10 md:py-14 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center">
-        {/* Left Column: Editorial Headline & Aggregated Metrics */}
+    <ScrollFade
+      as="section"
+      className="relative w-full overflow-hidden border-b border-white/[0.08] bg-[#090a0f]"
+    >
+      <div className="relative z-10 marge-x py-10 md:py-12 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center">
+        {/* Left Column: Editorial Headline & Segmented Spotlight Switcher */}
         <div className="space-y-5 max-w-2xl">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-mono tabular-nums">
-            <span>Unified Internet Review Index</span>
-            <span aria-hidden="true">·</span>
-            <span>890+ Critic Reviews Aggregated</span>
-            <span aria-hidden="true">·</span>
-            <span>60 FPS Locked</span>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400 font-mono tabular-nums">
+            <span className="text-white font-semibold">00 /</span>
+            <span>FEATURED ARCHIVE SPOTLIGHT</span>
+            <span aria-hidden="true" className="text-zinc-600">
+              ·
+            </span>
+            <Link
+              href="/"
+              className="underline underline-offset-4 hover:text-white transition-colors"
+            >
+              Overview Workspace
+            </Link>
           </div>
 
           <Carousel
@@ -81,10 +93,10 @@ export function CarouselProgressBar() {
             <CarouselContent>
               {featuredSlides.map((slide) => (
                 <CarouselItem key={slide.id} className="space-y-3">
-                  <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-balance leading-[1.12]">
+                  <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-balance leading-[1.1] text-white">
                     Every review across the internet, distilled into one view.
-                  </h1>
-                  <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed text-balance">
+                  </h2>
+                  <p className="text-sm md:text-base text-zinc-400 max-w-xl leading-relaxed text-balance">
                     Compare critic verdicts from IGN, GameSpot, PC Gamer,
                     Eurogamer, OpenCritic, and verified Steam player ratings
                     side by side.
@@ -99,9 +111,10 @@ export function CarouselProgressBar() {
               variant="default"
               size="lg"
               onClick={() => openGameModal(activeSlide.id)}
-              className="whitespace-nowrap shrink-0"
+              className="whitespace-nowrap shrink-0 font-mono tabular-nums"
             >
-              Inspect {activeSlide.title} ({activeSlide.metaScore}/100)
+              Inspect {activeSlide.title.split(":")[0]} ({activeSlide.metaScore}
+              /100)
             </Button>
             <Button
               variant="outline"
@@ -109,52 +122,55 @@ export function CarouselProgressBar() {
               onClick={searchModal.onOpen}
               className="whitespace-nowrap shrink-0"
             >
-              Browse All Outlets
+              Filter Catalogue
             </Button>
           </div>
 
-          {/* Slide Selector Bars */}
-          <div className="flex items-center gap-3 pt-2">
-            {featuredSlides.map((slide, index) => (
-              <button
-                key={slide.id}
-                type="button"
-                aria-label={`Spotlight ${slide.title}`}
-                onClick={() => goToIndex(index)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300",
-                  current === index
-                    ? "w-10 bg-foreground"
-                    : "w-4 bg-muted-foreground/30 hover:bg-muted-foreground/60"
-                )}
-              />
-            ))}
-            <span className="text-xs text-muted-foreground ml-2 truncate">
-              Spotlight: {activeSlide.title} · {activeSlide.developer}
-            </span>
+          {/* Segmented Spotlight Switcher */}
+          <div
+            role="tablist"
+            aria-label="Select featured release spotlight"
+            className="inline-flex flex-wrap items-center p-1 rounded-md border border-white/[0.08] bg-[#12151e]"
+          >
+            {featuredSlides.map((slide, index) => {
+              const isActive = current === index;
+              return (
+                <button
+                  key={slide.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`Spotlight ${slide.title}`}
+                  onClick={() => goToIndex(index)}
+                  className={cn(
+                    "relative px-2.5 py-1 rounded-[5px] text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0",
+                    isActive
+                      ? "text-white"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  )}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="browse-spotlight-active-slide"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 32,
+                      }}
+                      className="absolute inset-0 rounded-[5px] bg-[#181c28] border border-white/[0.12]"
+                    />
+                  )}
+                  <span className="relative z-10">
+                    {slide.title.split(":")[0]}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Right Column: Featured Game Review Spotlight Card */}
-        <motion.div
-          initial={{ y: 0, scale: 1 }}
-          whileHover={{
-            y: [-6, -11, -6],
-            scale: 1.015,
-            transition: {
-              y: {
-                duration: 2.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              },
-              scale: {
-                type: "spring",
-                stiffness: 300,
-                damping: 20,
-              },
-            },
-          }}
-          whileTap={{ scale: 0.99 }}
+        {/* Right Column: Full-Bleed Spotlight Card with Dark Gradient Scrim & Threshold Meter */}
+        <div
           onClick={() => openGameModal(activeSlide.id)}
           role="button"
           tabIndex={0}
@@ -164,9 +180,9 @@ export function CarouselProgressBar() {
               openGameModal(activeSlide.id);
             }
           }}
-          className="group relative overflow-hidden rounded-2xl border border-border bg-card/85 cursor-pointer shadow-sm hover:shadow-xl transition-shadow"
+          className="group relative overflow-hidden rounded-lg border border-white/[0.08] hover:border-white/[0.18] bg-[#12151e] cursor-pointer transition-colors"
         >
-          <div className="relative aspect-video w-full overflow-hidden bg-muted">
+          <div className="relative aspect-video w-full overflow-hidden bg-[#090a0f]">
             <Image
               src={activeSlide.imageUrl}
               alt={activeSlide.title}
@@ -176,28 +192,50 @@ export function CarouselProgressBar() {
               referrerPolicy="no-referrer"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#090a0f] via-[#090a0f]/55 to-transparent" />
+            <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[11px] font-mono text-zinc-300 tabular-nums">
+              <span className="px-1.5 py-0.5 rounded-sm border border-white/[0.12] bg-[#090a0f]/85">
+                REL-0{activeSlide.id}
+              </span>
+              <span className="px-1.5 py-0.5 rounded-sm border border-white/[0.12] bg-[#090a0f]/85">
+                {activeSlide.releaseYear}
+              </span>
+            </div>
             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4 text-white">
               <div>
-                <div className="text-xs text-white/75">
+                <div className="text-xs font-mono text-zinc-300">
                   {activeSlide.genre} · {activeSlide.developer}
                 </div>
-                <div className="text-xl font-semibold tracking-tight">
+                <div className="text-xl font-semibold tracking-tight text-white">
                   {activeSlide.title}
                 </div>
               </div>
               <div className="text-right font-mono tabular-nums shrink-0">
-                <div className="text-2xl font-bold text-emerald-400">
+                <div className="text-2xl font-bold text-white">
                   {activeSlide.metaScore}
+                  <span className="text-xs font-normal text-zinc-400">
+                    /100
+                  </span>
                 </div>
-                <div className="text-[11px] text-white/75">
+                <div className="text-[11px] text-zinc-300">
                   {activeSlide.reviewCount} Outlets
                 </div>
               </div>
             </div>
           </div>
-        </motion.div>
+
+          <div className="relative h-1 w-full bg-white/[0.08] overflow-hidden">
+            <div
+              className="h-full bg-zinc-200"
+              style={{ width: `${activeSlide.metaScore}%` }}
+            />
+            <span
+              aria-hidden="true"
+              className="absolute top-0 bottom-0 left-[80%] w-px bg-[#090a0f]"
+            />
+          </div>
+        </div>
       </div>
-    </section>
+    </ScrollFade>
   );
 }

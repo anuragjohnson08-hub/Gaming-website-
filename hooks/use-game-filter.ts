@@ -8,11 +8,15 @@ import {
 
 interface GameFilterStore {
   games: GameItem[];
+  isLoading: boolean;
+  hasFetched: boolean;
   selectedGenre: string;
   selectedOutlet: string;
   searchQuery: string;
   sortBy: SortOption;
   activeGameId: number | null;
+  setIsLoading: (isLoading: boolean) => void;
+  fetchGames: () => Promise<void>;
   setGenre: (genre: string) => void;
   setOutlet: (outlet: string) => void;
   setSearchQuery: (query: string) => void;
@@ -26,13 +30,33 @@ interface GameFilterStore {
   ) => void;
 }
 
-export const useGameFilter = create<GameFilterStore>((set) => ({
+export const useGameFilter = create<GameFilterStore>((set, get) => ({
   games: GAMES_CATALOGUE,
+  isLoading: false,
+  hasFetched: false,
   selectedGenre: "All",
   selectedOutlet: "All Outlets",
   searchQuery: "",
   sortBy: "metaScore",
   activeGameId: null,
+  setIsLoading: (isLoading) => set({ isLoading }),
+  fetchGames: async () => {
+    if (get().hasFetched) return;
+    set({ isLoading: true });
+    try {
+      const res = await fetch("/api/games");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.games) && data.games.length > 0) {
+          set({ games: data.games, isLoading: false, hasFetched: true });
+          return;
+        }
+      }
+      set({ isLoading: false, hasFetched: true });
+    } catch {
+      set({ isLoading: false, hasFetched: true });
+    }
+  },
   setGenre: (selectedGenre) => set({ selectedGenre }),
   setOutlet: (selectedOutlet) => set({ selectedOutlet }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),

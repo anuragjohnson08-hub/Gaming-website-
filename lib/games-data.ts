@@ -807,6 +807,35 @@ export function getScoreTier(score: number): {
   return { label: "Mixed or Average", tier: "mixed" };
 }
 
+export function getOutletMonogram(outlet: string): {
+  code: string;
+  scaleLabel: string;
+} {
+  const normalized = outlet.trim().toLowerCase();
+  if (normalized === "ign") {
+    return { code: "IG", scaleLabel: "10-PT SCALE" };
+  }
+  if (normalized === "gamespot") {
+    return { code: "GS", scaleLabel: "10-PT SCALE" };
+  }
+  if (normalized === "pc gamer") {
+    return { code: "PC", scaleLabel: "100-PT SCALE" };
+  }
+  if (normalized === "eurogamer") {
+    return { code: "EG", scaleLabel: "5-STAR SCALE" };
+  }
+  if (normalized === "steam" || normalized.includes("steam")) {
+    return { code: "ST", scaleLabel: "PLAYER INDEX" };
+  }
+  if (normalized === "opencritic") {
+    return { code: "OC", scaleLabel: "MIGHTY AVG" };
+  }
+  return {
+    code: outlet.slice(0, 2).toUpperCase() || "RV",
+    scaleLabel: "100-PT NORM",
+  };
+}
+
 export function filterAndSortGames(
   games: GameItem[],
   options: {

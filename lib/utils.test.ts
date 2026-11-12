@@ -6,6 +6,7 @@ import {
   GAMES_CATALOGUE,
   filterAndSortGames,
   getAllOutletReviews,
+  getOutletMonogram,
   getScoreTier,
 } from "./games-data";
 import { useCheckboxSelection } from "../hooks/use-checkbox-selection";
@@ -13,6 +14,21 @@ import { useHero } from "../hooks/use-hero-selection";
 import { useSearchModal } from "../hooks/use-search-modal";
 import { useGameFilter } from "../hooks/use-game-filter";
 import { siteConfig } from "../config/site";
+import { computeScrollFadeState } from "./scroll-fade";
+import {
+  DASHBOARD_VIEWS,
+  PRICING_TIERS,
+  computePlanPrice,
+  computeSeoAuditScore,
+  validateWaitlistEmail,
+} from "./seo-data";
+import {
+  BENTO_MATRIX_GAMES,
+  FLUID_PRICING_TIERS,
+  PLATFORM_HUB_VIEWS,
+  filterMatrixGames,
+  formatFluidPlanPrice,
+} from "./fluid-flow-data";
 
 test("cn merges tailwind classes and resolves conflicts", () => {
   assert.equal(cn("px-2 py-1", "px-4"), "py-1 px-4");
@@ -45,6 +61,15 @@ test("games-data filtering, sorting, and score tiers work accurately", () => {
   assert.equal(getScoreTier(95).tier, "acclaim");
   assert.equal(getScoreTier(84).tier, "favorable");
   assert.equal(getScoreTier(65).tier, "mixed");
+
+  assert.deepEqual(getOutletMonogram("IGN"), {
+    code: "IG",
+    scaleLabel: "10-PT SCALE",
+  });
+  assert.deepEqual(getOutletMonogram("Eurogamer"), {
+    code: "EG",
+    scaleLabel: "5-STAR SCALE",
+  });
 
   const roguelikes = filterAndSortGames(GAMES_CATALOGUE, {
     genre: "Roguelike",
@@ -111,3 +136,56 @@ test("useHero and useSearchModal toggle states cleanly", () => {
   assert.equal(useSearchModal.getState().isOpen, false);
   assert.equal(siteConfig.name, "Next Mobbin Clone");
 });
+
+test("computeScrollFadeState classifies visible, above, and below viewport bounds", () => {
+  assert.equal(
+    computeScrollFadeState({ top: 150, bottom: 520 }, 900, 0.07),
+    "visible"
+  );
+  assert.equal(
+    computeScrollFadeState({ top: -320, bottom: 40 }, 900, 0.07),
+    "above"
+  );
+  assert.equal(
+    computeScrollFadeState({ top: 860, bottom: 1200 }, 900, 0.07),
+    "below"
+  );
+});
+
+test("RankPulse seo-data calculates pricing, audit scores, and validates waitlist emails", () => {
+  assert.equal(DASHBOARD_VIEWS.overview.organicKeywords.value, "10.15k");
+  assert.equal(DASHBOARD_VIEWS.overview.totalImpressions.value, "25.8k");
+  assert.equal(PRICING_TIERS.length, 3);
+  assert.equal(computePlanPrice(29, false), 29);
+  assert.equal(computePlanPrice(29, true), 23);
+  assert.equal(computePlanPrice(79, true), 63);
+  assert.equal(computePlanPrice(199, true), 159);
+
+  const defaultAudit = computeSeoAuditScore("www.website.com", [
+    "Technical",
+    "Keywords",
+    "SERP Intent",
+    "Backlinks",
+  ]);
+  assert.equal(defaultAudit.score, 98);
+
+  assert.equal(validateWaitlistEmail("").valid, false);
+  assert.equal(validateWaitlistEmail("invalid-email").valid, false);
+  assert.equal(validateWaitlistEmail("founder@rankpulse.ai").valid, true);
+});
+
+test("Fluid Flow multi-platform hub views, matrix filter, and pricing formatter work accurately", () => {
+  assert.equal(PLATFORM_HUB_VIEWS.all.fluidScore, "89/100");
+  assert.equal(PLATFORM_HUB_VIEWS.all.consensusValue, "94% Positive");
+
+  const deckRpgs = filterMatrixGames(BENTO_MATRIX_GAMES, "", "Deck", "RPG");
+  assert.equal(deckRpgs.length, 2);
+
+  assert.equal(formatFluidPlanPrice(FLUID_PRICING_TIERS[0], false), "$0");
+  assert.equal(formatFluidPlanPrice(FLUID_PRICING_TIERS[1], false), "$4.99");
+  assert.equal(formatFluidPlanPrice(FLUID_PRICING_TIERS[1], true), "$3.99");
+  assert.equal(formatFluidPlanPrice(FLUID_PRICING_TIERS[2], false), "$19");
+  assert.equal(formatFluidPlanPrice(FLUID_PRICING_TIERS[2], true), "$15");
+});
+
+

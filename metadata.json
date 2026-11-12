@@ -1,6 +1,6 @@
 {
-  "name": "Next Mobbin Clone",
-  "description": "Next Mobbin Clone for testing shadcn-ui",
+  "name": "RankPulse — AI SEO & Generative Search Platform",
+  "description": "Elevate your site's visibility effortlessly with AI, where smart technology meets intuitive, user-friendly SEO workflows.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
